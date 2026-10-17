@@ -168,7 +168,7 @@ export const GoogleDriveConnectionCard: React.FC<GoogleDriveConnectionCardProps>
       </div>
 
       {/* Main Core Review Copy Banner */}
-      <div className="bg-[#FFFBF2] dark:bg-slate-900/80 rounded-2xl p-4 sm:p-5 border border-amber-200/70 dark:border-amber-900/40 text-left mb-6">
+      <div className="bg-[#FFFBF2] dark:bg-[#161F30] rounded-2xl p-4 sm:p-5 border border-amber-200/70 dark:border-amber-900/50 text-left mb-6">
         <p className="text-sm sm:text-base text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
           Review the card below to connect Google Drive to Sesh@. Once enabled, the application will be able to{' '}
           <strong className="text-slate-950 dark:text-white font-bold underline decoration-amber-400 decoration-2 underline-offset-2">
@@ -183,7 +183,7 @@ export const GoogleDriveConnectionCard: React.FC<GoogleDriveConnectionCardProps>
         {capabilities.map((item) => (
           <div
             key={item.id}
-            className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-850/60 border border-slate-200/70 dark:border-slate-800/80 hover:border-amber-300 dark:hover:border-amber-600/50 transition group"
+            className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161F30]/90 border border-slate-200/70 dark:border-slate-800/80 hover:border-amber-300 dark:hover:border-amber-600/50 transition group"
           >
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-2.5">

@@ -18,9 +18,9 @@ export const AuthWelcome: React.FC<AuthWelcomeProps> = ({
   onToggleTheme,
 }) => {
   return (
-    <div className="min-h-screen bg-[#FFFBF2] dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-[#FFBF24] selection:text-slate-900 transition-colors duration-200">
+    <div className="min-h-screen bg-[#FFFBF2] dark:bg-[#0B111E] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-[#FFBF24] selection:text-slate-900 transition-colors duration-200">
       {/* Top Navbar */}
-      <header className="h-20 border-b border-slate-200/60 dark:border-slate-800/60 px-6 sm:px-12 flex items-center justify-between">
+      <header className="h-20 border-b border-slate-200/60 dark:border-slate-800/80 px-6 sm:px-12 flex items-center justify-between sticky top-0 z-20 bg-[#FFFBF2]/90 dark:bg-[#0B111E]/90 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <img
             src={isDarkMode ? '/logo-dark.svg' : '/logo.svg'}
