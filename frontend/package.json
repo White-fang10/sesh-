@@ -1,0 +1,28 @@
+{
+  "name": "sesh-frontend",
+  "version": "1.0.0",
+  "description": "Sesh@ Next.js Frontend for Vercel Hobby",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "firebase": "^11.4.0",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.7.3"
+  }
+}

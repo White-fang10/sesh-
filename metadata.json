@@ -1,0 +1,6 @@
+{
+  "name": "Sesh@",
+  "description": "A highly customizable, Google Drive-powered notes workspace inspired by Google Keep with Note Design Studio, checklists, and rich drawing tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
