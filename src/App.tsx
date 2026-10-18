@@ -61,6 +61,7 @@ export default function App() {
   // Authentication & User State
   const [user, setUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isGuestMode, setIsGuestMode] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [driveQuota, setDriveQuota] = useState<DriveQuotaInfo | null>(null);
 
@@ -669,6 +670,7 @@ export default function App() {
     await logout();
     setUser(null);
     setDriveQuota(null);
+    setIsGuestMode(false);
   };
 
   // CRUD Operations
@@ -992,12 +994,13 @@ export default function App() {
     return result;
   }, [notes, currentTab, categoryFilter, sortBy, searchQuery, labels]);
 
-  // If user is not authenticated and not loading, show Sesh@ Welcome page
-  if (!user && !isAuthLoading) {
+  // If user is not authenticated, not loading, and not in guest mode, show Sesh@ Welcome page
+  if (!user && !isAuthLoading && !isGuestMode) {
     return (
       <div className={isDarkMode ? 'dark' : ''}>
         <AuthWelcome
           onSignIn={handleGoogleSignIn}
+          onExploreGuest={() => setIsGuestMode(true)}
           isLoading={isAuthLoading}
           error={authError}
           isDarkMode={isDarkMode}
@@ -1028,6 +1031,7 @@ export default function App() {
           isSidebarOpen={isSidebarOpen}
           onOpenSettings={() => setIsSettingsModalOpen(true)}
           onOpenDeployment={() => setIsDeploymentModalOpen(true)}
+          onOpenConnectDrive={() => setIsStorageModalOpen(true)}
         />
 
         {/* Main Body */}
@@ -1161,44 +1165,45 @@ export default function App() {
               </div>
             )}
 
-            {/* Notes Grid matching reference layout (4 columns on desktop) */}
+            {/* Notes Grid / Masonry: Auto-adaptable column layout where short notes stay compact and long notes expand naturally */}
             <div
               className={
                 settings.layout === 'list'
                   ? 'max-w-3xl mx-auto space-y-4'
-                  : 'max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4.5'
+                  : 'max-w-7xl mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4.5 [column-fill:_balance]'
               }
             >
               {displayNotes.map((note) => (
-                <NoteCard
-                  key={note.id}
-                  note={note}
-                  labels={labels}
-                  isDarkMode={isDarkMode}
-                  onTogglePin={handleTogglePin}
-                  onToggleStar={handleToggleStar}
-                  onToggleArchive={handleToggleArchive}
-                  onMoveToTrash={handleMoveToTrash}
-                  onRestoreFromTrash={handleRestoreFromTrash}
-                  onPermanentDelete={handlePermanentDelete}
-                  onDuplicateNote={handleDuplicateNote}
-                  onOpenDesignStudio={(n) =>
-                    setDesignStudioConfig({
-                      note: n,
-                      appearance: n.appearance,
-                      onApply: (app) =>
-                        handleUpdateNote({
-                          ...n,
-                          appearance: app,
-                          updatedAt: Date.now(),
-                        }),
-                    })
-                  }
-                  onOpenShareModal={(n) => setShareTargetNote(n)}
-                  onToggleChecklistItem={handleToggleChecklistItem}
-                  onEditNote={(n) => setEditingNote(n)}
-                  isTrashView={currentTab === 'trash'}
-                />
+                <div key={note.id} className="break-inside-avoid mb-4.5 inline-block w-full align-top">
+                  <NoteCard
+                    note={note}
+                    labels={labels}
+                    isDarkMode={isDarkMode}
+                    onTogglePin={handleTogglePin}
+                    onToggleStar={handleToggleStar}
+                    onToggleArchive={handleToggleArchive}
+                    onMoveToTrash={handleMoveToTrash}
+                    onRestoreFromTrash={handleRestoreFromTrash}
+                    onPermanentDelete={handlePermanentDelete}
+                    onDuplicateNote={handleDuplicateNote}
+                    onOpenDesignStudio={(n) =>
+                      setDesignStudioConfig({
+                        note: n,
+                        appearance: n.appearance,
+                        onApply: (app) =>
+                          handleUpdateNote({
+                            ...n,
+                            appearance: app,
+                            updatedAt: Date.now(),
+                          }),
+                      })
+                    }
+                    onOpenShareModal={(n) => setShareTargetNote(n)}
+                    onToggleChecklistItem={handleToggleChecklistItem}
+                    onEditNote={(n) => setEditingNote(n)}
+                    isTrashView={currentTab === 'trash'}
+                  />
+                </div>
               ))}
             </div>
 

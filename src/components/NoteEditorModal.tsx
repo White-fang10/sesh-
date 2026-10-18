@@ -15,7 +15,9 @@ import {
   Check,
   Palette,
   Upload,
+  Code,
 } from 'lucide-react';
+import { CodeBlockEditor } from './CodeBlock';
 import {
   Note,
   ChecklistItem,
@@ -74,6 +76,10 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
   const [appearance, setAppearance] = useState<NoteAppearance>(note.appearance);
   const [showLabelPicker, setShowLabelPicker] = useState(false);
   const [showBgPicker, setShowBgPicker] = useState(false);
+  const [codeSnippet, setCodeSnippet] = useState<{ language: string; code: string } | null>(
+    note.codeSnippet || null
+  );
+  const [showCodeEditor, setShowCodeEditor] = useState(!!note.codeSnippet?.code);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const bgUploadRef = useRef<HTMLInputElement | null>(null);
@@ -92,6 +98,8 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
       isPinned,
       isArchived,
       appearance,
+      codeSnippet: codeSnippet && codeSnippet.code.trim() ? codeSnippet : undefined,
+      type: codeSnippet && codeSnippet.code.trim() ? 'code' : items.length > 0 ? 'checklist' : 'text',
       updatedAt: Date.now(),
       version: note.version + 1,
     });
@@ -258,6 +266,20 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
             className="w-full bg-transparent text-sm placeholder-slate-400 focus:outline-none resize-none leading-relaxed"
             style={{ color: colorTokens.bodyColor }}
           />
+
+          {/* Code Block Editor */}
+          {showCodeEditor && codeSnippet && (
+            <CodeBlockEditor
+              code={codeSnippet.code}
+              language={codeSnippet.language}
+              onChangeCode={(code) => setCodeSnippet((prev) => ({ ...prev!, code }))}
+              onChangeLanguage={(language) => setCodeSnippet((prev) => ({ ...prev!, language }))}
+              onRemove={() => {
+                setCodeSnippet(null);
+                setShowCodeEditor(false);
+              }}
+            />
+          )}
 
           {/* Checklist Editor */}
           {items.length > 0 && (
@@ -530,6 +552,34 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
               title="Add Checklist"
             >
               <CheckSquare className="w-4 h-4" />
+            </button>
+
+            {/* Code Block */}
+            <button
+              type="button"
+              onClick={() => {
+                if (showCodeEditor) {
+                  if (!codeSnippet?.code.trim()) {
+                    setCodeSnippet(null);
+                    setShowCodeEditor(false);
+                  } else {
+                    setShowCodeEditor(false);
+                  }
+                } else {
+                  setShowCodeEditor(true);
+                  if (!codeSnippet) {
+                    setCodeSnippet({ language: 'javascript', code: '' });
+                  }
+                }
+              }}
+              className={`p-2 rounded-lg transition ${
+                showCodeEditor || codeSnippet?.code
+                  ? 'text-[#F59E0B] bg-amber-100/50 dark:bg-amber-950/40'
+                  : 'text-slate-500 hover:text-slate-800 rounded-lg hover:bg-black/5'
+              }`}
+              title="Code Block"
+            >
+              <Code className="w-4 h-4" />
             </button>
 
             {/* Add Drawing */}

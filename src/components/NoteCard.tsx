@@ -27,6 +27,7 @@ import {
 } from '../utils/contrast';
 import { SOLID_PALETTE, GRADIENT_PALETTE } from '../constants/presets';
 import { SystemArchitectureDiagram } from './SystemArchitectureDiagram';
+import { CodeBlockDisplay, parseContentWithCodeBlocks } from './CodeBlock';
 
 interface NoteCardProps {
   note: Note;
@@ -183,9 +184,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   return (
     <div
       onClick={() => !isTrashView && onEditNote(note)}
-      className={`group relative rounded-2xl border transition-all duration-200 select-none cursor-pointer flex flex-col justify-between overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 ${
-        isSmall ? 'min-h-[110px]' : isLarge ? 'min-h-[220px]' : 'min-h-[150px]'
-      }`}
+      className="group relative rounded-2xl border transition-all duration-200 select-none cursor-pointer flex flex-col justify-between overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 break-inside-avoid w-full"
       style={{
         backgroundColor:
           appearance.bgType === 'solid'
@@ -607,26 +606,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </div>
           )}
 
-          {/* Code Snippet (e.g. Docker Commands) */}
-          {isCodeCard && note.codeSnippet && (
-            <div className="bg-[#0D1117] text-slate-200 rounded-xl p-3 text-xs font-mono mb-2.5 space-y-1 overflow-x-auto">
-              {note.codeSnippet.code.split('\n').map((line, idx) => {
-                if (line.startsWith('#')) {
-                  return (
-                    <div key={idx} className="text-[#34D399]">
-                      {line}
-                    </div>
-                  );
-                }
-                const parts = line.split(' ');
-                return (
-                  <div key={idx}>
-                    <span className="text-[#FBBF24] font-semibold">{parts[0]}</span>{' '}
-                    <span>{parts.slice(1).join(' ')}</span>
-                  </div>
-                );
-              })}
-            </div>
+          {/* Code Snippet Block */}
+          {note.codeSnippet && note.codeSnippet.code && (
+            <CodeBlockDisplay
+              code={note.codeSnippet.code}
+              language={note.codeSnippet.language}
+            />
           )}
 
           {/* Drawing Canvas Preview */}
@@ -678,16 +663,31 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </div>
           )}
 
-          {/* Standard Text Content */}
+          {/* Standard Text Content with Code Blocks Support */}
           {note.content && !isCodeCard && !isQuoteCard && (
-            <p
-              className={`leading-relaxed mb-2.5 break-words whitespace-pre-line ${
-                isSmall ? 'text-xs line-clamp-2' : 'text-xs'
-              }`}
-              style={{ color: colorTokens.bodyColor }}
-            >
-              {note.content}
-            </p>
+            <div className="space-y-2 mb-2.5">
+              {parseContentWithCodeBlocks(note.content).map((block, idx) => {
+                if (block.type === 'code') {
+                  return (
+                    <CodeBlockDisplay
+                      key={idx}
+                      code={block.content}
+                      language={block.language}
+                    />
+                  );
+                }
+                if (!block.content.trim()) return null;
+                return (
+                  <p
+                    key={idx}
+                    className="leading-relaxed break-words whitespace-pre-line text-xs"
+                    style={{ color: colorTokens.bodyColor }}
+                  >
+                    {block.content}
+                  </p>
+                );
+              })}
+            </div>
           )}
 
           {/* Image count badge if top cover image */}

@@ -2,7 +2,7 @@
  * Sesh@ Core Type Definitions
  */
 
-export type NoteType = 'text' | 'checklist' | 'drawing' | 'mixed';
+export type NoteType = 'text' | 'checklist' | 'drawing' | 'mixed' | 'code';
 
 export interface ChecklistItem {
   id: string;

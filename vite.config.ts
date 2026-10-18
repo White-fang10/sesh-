@@ -5,13 +5,38 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'api-health-plugin',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url === '/api/health') {
+              res.setHeader('Content-Type', 'application/json');
+              res.end(
+                JSON.stringify({
+                  status: 'healthy',
+                  service: 'Sesh@ Notes Workspace',
+                  uptime: process.uptime(),
+                  timestamp: new Date().toISOString(),
+                })
+              );
+              return;
+            }
+            next();
+          });
+        },
+      },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(process.cwd(), '.'),
       },
     },
     server: {
+      host: '0.0.0.0',
+      port: 3000,
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',

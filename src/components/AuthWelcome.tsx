@@ -4,6 +4,7 @@ import { GoogleDriveConnectionCard } from './GoogleDriveConnectionCard';
 
 interface AuthWelcomeProps {
   onSignIn: () => void;
+  onExploreGuest?: () => void;
   isLoading: boolean;
   error?: string | null;
   isDarkMode?: boolean;
@@ -12,6 +13,7 @@ interface AuthWelcomeProps {
 
 export const AuthWelcome: React.FC<AuthWelcomeProps> = ({
   onSignIn,
+  onExploreGuest,
   isLoading,
   error,
   isDarkMode = false,
@@ -79,6 +81,7 @@ export const AuthWelcome: React.FC<AuthWelcomeProps> = ({
           isLoading={isLoading}
           error={error}
           onConnect={onSignIn}
+          onExploreLocal={onExploreGuest}
           variant="welcome"
         />
       </main>

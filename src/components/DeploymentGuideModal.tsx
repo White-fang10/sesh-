@@ -82,23 +82,23 @@ SESSION_SECRET=super_random_hex_string_32_bytes`;
         <div className="flex-1 overflow-y-auto py-4 space-y-6 text-xs text-slate-600 dark:text-slate-300">
           {/* Architecture Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+            <div className="p-3.5 rounded-2xl bg-amber-500/10 dark:bg-amber-400/10 border border-amber-300 dark:border-amber-600/50">
               <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white mb-1.5">
-                <Globe className="w-4 h-4 text-sky-500" />
-                <span>Frontend (Vercel)</span>
+                <Rocket className="w-4 h-4 text-amber-500" />
+                <span>AI Studio Deployment (Active)</span>
               </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                Deployed on Vercel Hobby (free). Next.js App Router, Tailwind CSS, IndexedDB offline cache, and Motion.
+              <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                Directly deployed in Google AI Studio. Full React SPA on Vite, Tailwind v4, instant preview & public share URLs.
               </p>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
               <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white mb-1.5">
-                <Server className="w-4 h-4 text-emerald-500" />
-                <span>Backend (Render)</span>
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <span>OAuth & Authentication</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed">
-                Deployed on Render Free Web Service (free). Lightweight Node/Express API, OAuth token validation, CORS, and health checks.
+                Integrated Google Cloud OAuth with restricted <code>drive.file</code> scope and Firebase Auth.
               </p>
             </div>
 

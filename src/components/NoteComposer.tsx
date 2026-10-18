@@ -11,7 +11,9 @@ import {
   Trash2,
   X,
   Upload,
+  Code,
 } from 'lucide-react';
+import { CodeBlockEditor } from './CodeBlock';
 import {
   Note,
   NoteType,
@@ -70,6 +72,8 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [showLabelPicker, setShowLabelPicker] = useState(false);
   const [showBgPicker, setShowBgPicker] = useState(false);
+  const [codeSnippet, setCodeSnippet] = useState<{ language: string; code: string } | null>(null);
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
 
   // Background appearance: if user manually selects or uploads, userCustomizedBg becomes true
   const [userCustomizedBg, setUserCustomizedBg] = useState(false);
@@ -97,7 +101,8 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
           !content.trim() &&
           items.length === 0 &&
           drawings.length === 0 &&
-          images.length === 0
+          images.length === 0 &&
+          !codeSnippet?.code.trim()
         ) {
           handleReset();
         }
@@ -105,7 +110,7 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isExpanded, title, content, items, drawings, images]);
+  }, [isExpanded, title, content, items, drawings, images, codeSnippet]);
 
   const handleReset = () => {
     setTitle('');
@@ -116,6 +121,8 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
     setDrawings([]);
     setImages([]);
     setSelectedLabels([]);
+    setCodeSnippet(null);
+    setShowCodeEditor(false);
     setUserCustomizedBg(false);
     setAppearance(getRandomNoteAppearance(isDarkMode));
     setShowLabelPicker(false);
@@ -129,7 +136,8 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
       !content.trim() &&
       items.length === 0 &&
       drawings.length === 0 &&
-      images.length === 0
+      images.length === 0 &&
+      !codeSnippet?.code.trim()
     ) {
       handleReset();
       return;
@@ -142,7 +150,9 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
 
     // Determine type
     let finalType: NoteType = 'text';
-    if (items.length > 0 && (drawings.length > 0 || images.length > 0 || content)) {
+    if (codeSnippet?.code.trim()) {
+      finalType = 'code';
+    } else if (items.length > 0 && (drawings.length > 0 || images.length > 0 || content)) {
       finalType = 'mixed';
     } else if (items.length > 0) {
       finalType = 'checklist';
@@ -160,6 +170,7 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
       labels: selectedLabels,
       isPinned,
       appearance: finalAppearance,
+      codeSnippet: codeSnippet && codeSnippet.code.trim() ? codeSnippet : undefined,
     });
 
     handleReset();
@@ -287,6 +298,21 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
               <CheckSquare className="w-4 h-4" />
             </button>
 
+            {/* Code Block Icon */}
+            <button
+              onClick={() => {
+                setIsExpanded(true);
+                setShowCodeEditor(true);
+                if (!codeSnippet) {
+                  setCodeSnippet({ language: 'javascript', code: '' });
+                }
+              }}
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition"
+              title="Add Code Block"
+            >
+              <Code className="w-4 h-4" />
+            </button>
+
             {/* List Icon */}
             <button
               onClick={() => {
@@ -386,6 +412,20 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
               className="w-full bg-transparent text-sm placeholder-slate-400 focus:outline-none resize-none leading-relaxed"
               style={{ color: appearance.textColor }}
             />
+
+            {/* Code Block Editor */}
+            {showCodeEditor && codeSnippet && (
+              <CodeBlockEditor
+                code={codeSnippet.code}
+                language={codeSnippet.language}
+                onChangeCode={(code) => setCodeSnippet((prev) => ({ ...prev!, code }))}
+                onChangeLanguage={(language) => setCodeSnippet((prev) => ({ ...prev!, language }))}
+                onRemove={() => {
+                  setCodeSnippet(null);
+                  setShowCodeEditor(false);
+                }}
+              />
+            )}
 
             {/* Checklist items */}
             {items.length > 0 && (
@@ -679,6 +719,34 @@ export const NoteComposer: React.FC<NoteComposerProps> = ({
                   title="Checklist"
                 >
                   <CheckSquare className="w-4 h-4" />
+                </button>
+
+                {/* Code Block Toggle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (showCodeEditor) {
+                      if (!codeSnippet?.code.trim()) {
+                        setCodeSnippet(null);
+                        setShowCodeEditor(false);
+                      } else {
+                        setShowCodeEditor(false);
+                      }
+                    } else {
+                      setShowCodeEditor(true);
+                      if (!codeSnippet) {
+                        setCodeSnippet({ language: 'javascript', code: '' });
+                      }
+                    }
+                  }}
+                  className={`p-1.5 rounded-lg transition ${
+                    showCodeEditor || codeSnippet?.code
+                      ? 'text-[#F59E0B] bg-amber-100/50 dark:bg-amber-950/40'
+                      : 'text-slate-500 hover:text-slate-800 rounded-lg hover:bg-black/5'
+                  }`}
+                  title="Insert Code Block"
+                >
+                  <Code className="w-4 h-4" />
                 </button>
 
                 {/* Add Drawing */}

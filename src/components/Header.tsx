@@ -32,6 +32,7 @@ interface HeaderProps {
   isSidebarOpen: boolean;
   onOpenSettings: () => void;
   onOpenDeployment: () => void;
+  onOpenConnectDrive?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -49,6 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
   isSidebarOpen,
   onOpenSettings,
   onOpenDeployment,
+  onOpenConnectDrive,
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showAppsMenu, setShowAppsMenu] = useState(false);
@@ -118,6 +120,18 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right: Theme Toggle, App Switcher, User Avatar */}
       <div className="flex items-center gap-3 shrink-0">
+        {/* If Guest/Not Connected, Show Connect Drive button */}
+        {!user && onOpenConnectDrive && (
+          <button
+            onClick={onOpenConnectDrive}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFBF24] hover:bg-[#F59E0B] text-slate-900 font-bold text-xs rounded-xl shadow-xs transition cursor-pointer"
+            title="Connect Google Drive to sync notes"
+          >
+            <HardDrive className="w-3.5 h-3.5" />
+            <span>Connect Drive</span>
+          </button>
+        )}
+
         {/* Sun/Moon Toggle */}
         <button
           onClick={() =>
@@ -205,28 +219,48 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
                 <div className="overflow-hidden">
                   <div className="font-semibold text-sm text-slate-900 dark:text-white truncate">
-                    {user?.displayName || 'Pranesh'}
+                    {user?.displayName || (user ? 'Pranesh' : 'Local User')}
                   </div>
                   <div className="text-xs text-slate-500 truncate">
-                    {user?.email || 'esppranesh@gmail.com'}
+                    {user?.email || (user ? 'esppranesh@gmail.com' : 'Offline / IndexedDB Mode')}
                   </div>
-                  <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-sm">
-                    Google Drive Connected
+                  <div
+                    className={`mt-0.5 inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-sm ${
+                      user
+                        ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'
+                        : 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40'
+                    }`}
+                  >
+                    {user ? 'Google Drive Connected' : 'Local Storage Mode'}
                   </div>
                 </div>
               </div>
 
               <div className="pt-2 space-y-1">
-                <button
-                  onClick={() => {
-                    setShowProfileMenu(false);
-                    onManualSync();
-                  }}
-                  className="w-full px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl flex items-center gap-2 transition"
-                >
-                  <RefreshCw className="w-4 h-4 text-slate-400" />
-                  <span>Sync Google Drive</span>
-                </button>
+                {!user && onOpenConnectDrive && (
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      onOpenConnectDrive();
+                    }}
+                    className="w-full px-3 py-2 text-xs font-semibold text-slate-900 dark:text-white bg-[#FFBF24]/20 hover:bg-[#FFBF24]/30 rounded-xl flex items-center gap-2 transition"
+                  >
+                    <HardDrive className="w-4 h-4 text-[#F59E0B]" />
+                    <span>Connect Google Drive</span>
+                  </button>
+                )}
+                {user && (
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      onManualSync();
+                    }}
+                    className="w-full px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl flex items-center gap-2 transition"
+                  >
+                    <RefreshCw className="w-4 h-4 text-slate-400" />
+                    <span>Sync Google Drive</span>
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setShowProfileMenu(false);

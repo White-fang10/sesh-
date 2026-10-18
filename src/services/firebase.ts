@@ -57,6 +57,12 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
     console.error('Sign in error:', error);
+    if (error.code === 'auth/popup-blocked') {
+      throw new Error('Sign-in popup was blocked by your browser. Please allow popups or continue in Offline mode.');
+    }
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in popup was closed before completion.');
+    }
     throw error;
   } finally {
     isSigningIn = false;
